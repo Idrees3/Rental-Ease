@@ -1,0 +1,19 @@
+# Rental Ease — linked to Supabase project efwcyuhtknalmsnrshka
+# CLI: supabase login → supabase link --project-ref efwcyuhtknalmsnrshka
+
+project_id = "efwcyuhtknalmsnrshka"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
