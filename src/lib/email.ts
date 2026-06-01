@@ -23,7 +23,7 @@ export async function sendReminderEmail(params: ReminderEmailParams) {
 
   const amountLine =
     params.amountQar != null
-      ? `<p style="font-size:18px;font-weight:600;">${params.amountQar.toLocaleString("en-QA")} QAR</p>`
+      ? `<p style="font-size:18px;font-weight:600;">${params.amountQar.toLocaleString("en-US")} QAR</p>`
       : "";
 
   const dueLine = params.dueDate

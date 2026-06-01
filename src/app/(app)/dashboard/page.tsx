@@ -7,11 +7,21 @@ import { APP_TAGLINE } from "@/lib/constants";
 import { getDashboardDueItems } from "@/lib/data/dashboard";
 import { getExpenseSummary } from "@/lib/data/expenses";
 import { formatQAR } from "@/lib/utils";
+import { NotificationsCard } from "@/components/notifications/notifications-card";
+import { getProfile } from "@/lib/data/profile";
+import { isNotificationsConfigured } from "@/lib/notifications/config";
 import { AlertCircle } from "lucide-react";
 
 export default async function DashboardPage() {
-  const [{ dueThisWeek, rentTotal, emiTotal, rentCount, emiCount }, expenses] =
-    await Promise.all([getDashboardDueItems(), getExpenseSummary()]);
+  const [
+    { dueThisWeek, rentTotal, emiTotal, rentCount, emiCount },
+    expenses,
+    profile,
+  ] = await Promise.all([
+    getDashboardDueItems(),
+    getExpenseSummary(),
+    getProfile(),
+  ]);
 
   const upcomingTotal = rentTotal + emiTotal;
 
@@ -65,6 +75,15 @@ export default async function DashboardPage() {
             </p>
           </CardContent>
         </Card>
+
+        {profile && isNotificationsConfigured() && (
+          <NotificationsCard
+            userId={profile.id}
+            pushEnabled={profile.push_enabled}
+            emailReminders={profile.email_reminders}
+            oneSignalAppId={process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID ?? ""}
+          />
+        )}
 
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground">
