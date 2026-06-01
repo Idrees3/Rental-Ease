@@ -13,17 +13,9 @@ export async function getRentTrackers(activeOnly = false) {
   }
 
   const { data, error } = await query;
-  if (error) throw error;
+  if (error) {
+    console.error("getRentTrackers:", error.message);
+    return [];
+  }
   return (data ?? []) as RentTracker[];
-}
-
-export async function getRentTracker(id: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("rent_trackers")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error) throw error;
-  return data as RentTracker;
 }

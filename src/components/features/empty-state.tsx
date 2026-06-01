@@ -1,8 +1,24 @@
-import { LucideIcon } from "lucide-react";
+"use client";
+
+import {
+  Home,
+  Landmark,
+  Receipt,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const ICONS = {
+  home: Home,
+  rent: Home,
+  emi: Landmark,
+  receipt: Receipt,
+} as const;
+
+export type EmptyIconName = keyof typeof ICONS;
+
 type EmptyStateProps = {
-  icon: LucideIcon;
+  icon: EmptyIconName;
   title: string;
   description: string;
   actionLabel?: string;
@@ -10,12 +26,14 @@ type EmptyStateProps = {
 };
 
 export function EmptyState({
-  icon: Icon,
+  icon,
   title,
   description,
   actionLabel,
   onAction,
 }: EmptyStateProps) {
+  const Icon: LucideIcon = ICONS[icon];
+
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed bg-muted/30 px-6 py-12 text-center">
       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-maroon/10 text-maroon">

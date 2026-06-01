@@ -13,6 +13,9 @@ export async function getEmiTrackers(activeOnly = false) {
   }
 
   const { data, error } = await query;
-  if (error) throw error;
+  if (error) {
+    console.error("getEmiTrackers:", error.message);
+    return [];
+  }
   return (data ?? []) as EmiTracker[];
 }

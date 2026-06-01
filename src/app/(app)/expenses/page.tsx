@@ -3,7 +3,7 @@ import { EmptyState } from "@/components/features/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatQAR } from "@/lib/utils";
-import { Plus, Receipt } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export const metadata = { title: "Monthly bills" };
 
@@ -22,7 +22,7 @@ export default function ExpensesPage() {
       />
       <main className="space-y-4 px-4 py-4">
         <EmptyState
-          icon={Receipt}
+          icon="receipt"
           title="Start tracking bills"
           description="Log utilities, telecom, and subscriptions in QAR."
         />

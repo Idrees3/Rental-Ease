@@ -6,10 +6,17 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatQAR(amount: number): string {
-  return new Intl.NumberFormat("en-QA", {
-    style: "currency",
-    currency: "QAR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
+  const value = Number(amount);
+  if (Number.isNaN(value)) return "QAR 0";
+
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "QAR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return `QAR ${value.toLocaleString("en-US")}`;
+  }
 }
