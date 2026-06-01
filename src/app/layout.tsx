@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { BottomNav } from "@/components/layout/bottom-nav";
 import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import "./globals.css";
 
@@ -33,8 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans min-h-dvh`}>
-        <div className="mx-auto min-h-dvh max-w-lg pb-nav">{children}</div>
-        <BottomNav />
+        <div className="mx-auto min-h-dvh max-w-lg">{children}</div>
       </body>
     </html>
   );

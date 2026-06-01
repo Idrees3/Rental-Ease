@@ -8,7 +8,7 @@ export const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL ?? `https://${APP_DOMAIN}`;
 
 export const NAV_ITEMS = [
-  { href: "/", label: "Home", icon: "home" as const },
+  { href: "/dashboard", label: "Home", icon: "home" as const },
   { href: "/rent", label: "Rent", icon: "home" as const },
   { href: "/emi", label: "EMI", icon: "landmark" as const },
   { href: "/expenses", label: "Bills", icon: "receipt" as const },

@@ -6,7 +6,7 @@ import { Home, Landmark, Receipt, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/", label: "Home", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/rent", label: "Rent", icon: Home },
   { href: "/emi", label: "EMI", icon: Landmark },
   { href: "/expenses", label: "Bills", icon: Receipt },
@@ -23,7 +23,9 @@ export function BottomNav() {
       <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2">
         {links.map(({ href, label, icon: Icon }) => {
           const active =
-            href === "/" ? pathname === "/" : pathname.startsWith(href);
+            href === "/dashboard"
+              ? pathname === "/dashboard"
+              : pathname.startsWith(href);
           return (
             <Link
               key={href}

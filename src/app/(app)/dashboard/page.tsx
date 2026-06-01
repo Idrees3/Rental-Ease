@@ -6,7 +6,6 @@ import { APP_TAGLINE } from "@/lib/constants";
 import { formatQAR } from "@/lib/utils";
 import { CalendarClock } from "lucide-react";
 
-/** Placeholder totals until Supabase is wired */
 const DEMO = {
   rentDue: 5500,
   rentDueDay: 1,
@@ -16,13 +15,10 @@ const DEMO = {
   monthLabel: "May 2026",
 };
 
-export default function HomePage() {
+export default function DashboardPage() {
   return (
     <>
-      <AppHeader
-        title="Dashboard"
-        subtitle={APP_TAGLINE}
-      />
+      <AppHeader title="Dashboard" subtitle={APP_TAGLINE} />
       <main className="space-y-4 px-4 py-4">
         <Card className="border-maroon/20 bg-gradient-to-br from-maroon/5 to-transparent">
           <CardHeader className="pb-2">

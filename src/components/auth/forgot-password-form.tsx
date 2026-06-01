@@ -2,42 +2,37 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/dashboard";
-
+export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setMessage(null);
 
     const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      email.trim(),
+      { redirectTo: `${window.location.origin}/reset-password` }
+    );
 
     setLoading(false);
 
-    if (signInError) {
-      setError(signInError.message);
+    if (resetError) {
+      setError(resetError.message);
       return;
     }
 
-    router.push(next);
-    router.refresh();
+    setMessage("If that email exists, we sent a reset link. Check your inbox.");
   }
 
   return (
@@ -53,38 +48,22 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            href="/forgot-password"
-            className="text-xs text-maroon hover:underline"
-          >
-            Forgot?
-          </Link>
-        </div>
-        <Input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
       {error && (
         <p className="text-sm text-destructive" role="alert">
           {error}
         </p>
       )}
+      {message && (
+        <p className="text-sm text-maroon" role="status">
+          {message}
+        </p>
+      )}
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? "Sending…" : "Send reset link"}
       </Button>
       <p className="text-center text-sm text-muted-foreground">
-        No account?{" "}
-        <Link href="/signup" className="text-maroon hover:underline">
-          Sign up
+        <Link href="/login" className="text-maroon hover:underline">
+          Back to sign in
         </Link>
       </p>
     </form>
