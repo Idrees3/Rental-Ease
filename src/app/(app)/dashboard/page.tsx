@@ -9,7 +9,6 @@ import { getExpenseSummary } from "@/lib/data/expenses";
 import { formatQAR } from "@/lib/utils";
 import { NotificationsCard } from "@/components/notifications/notifications-card";
 import { getProfile } from "@/lib/data/profile";
-import { isNotificationsConfigured } from "@/lib/notifications/config";
 import { AlertCircle } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -76,7 +75,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        {profile && isNotificationsConfigured() && (
+        {profile && (
           <NotificationsCard
             userId={profile.id}
             pushEnabled={profile.push_enabled}

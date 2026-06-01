@@ -9,7 +9,11 @@ import {
 } from "@/app/(app)/notifications/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { isOneSignalConfigured, isResendConfigured } from "@/lib/notifications/config";
+import {
+  isNotificationsConfigured,
+  isOneSignalConfigured,
+  isResendConfigured,
+} from "@/lib/notifications/config";
 
 type NotificationsCardProps = {
   userId: string;
@@ -52,6 +56,12 @@ export function NotificationsCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!isNotificationsConfigured() && (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Add Resend + OneSignal keys in Vercel → Environment Variables, then
+            Redeploy. (.env.local only works on your PC.)
+          </p>
+        )}
         <form
           action={(fd) => {
             startTransition(async () => {
