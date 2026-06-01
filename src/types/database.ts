@@ -54,3 +54,52 @@ export const LOAN_TYPE_LABELS: Record<LoanType, string> = {
   personal: "Personal loan",
   other: "Other loan",
 };
+
+export type ExpenseCategory =
+  | "utilities"
+  | "telecom"
+  | "subscription"
+  | "groceries"
+  | "transport"
+  | "other";
+
+export type MonthlyExpense = {
+  id: string;
+  user_id: string;
+  name: string;
+  category: ExpenseCategory;
+  amount_qar: number;
+  due_day: number | null;
+  is_recurring: boolean;
+  month_year: string;
+  is_paid: boolean;
+  paid_at: string | null;
+  created_at: string;
+};
+
+export type CategoryBudget = {
+  id: string;
+  user_id: string;
+  category: ExpenseCategory;
+  amount_qar: number;
+  month_year: string;
+  created_at: string;
+};
+
+export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
+  utilities: "Utilities (Kahramaa)",
+  telecom: "Telecom",
+  subscription: "Subscriptions",
+  groceries: "Grocery",
+  transport: "Transport",
+  other: "Other",
+};
+
+export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+  "utilities",
+  "telecom",
+  "subscription",
+  "groceries",
+  "transport",
+  "other",
+];

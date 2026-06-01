@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { isAuthPath, isProtectedPath } from "@/lib/auth/routes";
+import { isAuthPath, isProtectedPath, isPublicPath } from "@/lib/auth/routes";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { updateSession } from "@/lib/supabase/middleware";
 
@@ -34,7 +34,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === "/" && !user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/install", request.url));
+  }
+
+  if (isPublicPath(pathname)) {
+    return response;
   }
 
   return response;

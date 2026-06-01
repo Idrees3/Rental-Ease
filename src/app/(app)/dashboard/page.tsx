@@ -5,12 +5,13 @@ import { DueBadge } from "@/components/features/due-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_TAGLINE } from "@/lib/constants";
 import { getDashboardDueItems } from "@/lib/data/dashboard";
+import { getExpenseSummary } from "@/lib/data/expenses";
 import { formatQAR } from "@/lib/utils";
 import { AlertCircle } from "lucide-react";
 
 export default async function DashboardPage() {
-  const { dueThisWeek, rentTotal, emiTotal, rentCount, emiCount } =
-    await getDashboardDueItems();
+  const [{ dueThisWeek, rentTotal, emiTotal, rentCount, emiCount }, expenses] =
+    await Promise.all([getDashboardDueItems(), getExpenseSummary()]);
 
   const upcomingTotal = rentTotal + emiTotal;
 
@@ -92,7 +93,12 @@ export default async function DashboardPage() {
           />
           <SummaryCard
             title="Monthly bills"
-            description="Utilities & more — coming in Phase 4"
+            description={
+              expenses.expenses.length
+                ? `${expenses.expenses.length} bill${expenses.expenses.length > 1 ? "s" : ""} this month`
+                : "Track utilities & grocery"
+            }
+            amount={expenses.totalSpent > 0 ? expenses.totalSpent : undefined}
             href="/expenses"
           />
         </section>

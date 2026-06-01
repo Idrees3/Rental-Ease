@@ -1,50 +1,30 @@
 import { AppHeader } from "@/components/layout/app-header";
-import { EmptyState } from "@/components/features/empty-state";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { formatQAR } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { ExpensesClient } from "@/components/expenses/expenses-client";
+import { getExpenseSummary } from "@/lib/data/expenses";
+import { currentMonthYear } from "@/lib/dates";
 
 export const metadata = { title: "Monthly bills" };
 
-const SAMPLE_CATEGORIES = [
-  { name: "Kahramaa (electricity)", amount: 280 },
-  { name: "Ooredoo / Vodafone", amount: 150 },
-  { name: "Internet (Ooredoo/Fiber)", amount: 325 },
-] as const;
+type ExpensesPageProps = {
+  searchParams: { month?: string };
+};
 
-export default function ExpensesPage() {
+export default async function ExpensesPage({ searchParams }: ExpensesPageProps) {
+  const monthYear =
+    searchParams.month && /^\d{4}-\d{2}$/.test(searchParams.month)
+      ? searchParams.month
+      : currentMonthYear();
+
+  const summary = await getExpenseSummary(monthYear);
+
   return (
     <>
       <AppHeader
         title="Monthly bills"
-        subtitle="Utilities, telecom & recurring expenses in QAR"
+        subtitle="Track utilities, grocery & more in QAR"
       />
       <main className="space-y-4 px-4 py-4">
-        <EmptyState
-          icon="receipt"
-          title="Start tracking bills"
-          description="Log utilities, telecom, and subscriptions in QAR."
-        />
-        <section className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Common in Qatar
-          </p>
-          {SAMPLE_CATEGORIES.map((item) => (
-            <Card key={item.name} className="opacity-60">
-              <CardContent className="flex items-center justify-between py-3">
-                <span className="text-sm">{item.name}</span>
-                <span className="text-sm font-medium">
-                  {formatQAR(item.amount)}
-                </span>
-              </CardContent>
-            </Card>
-          ))}
-        </section>
-        <Button className="w-full" size="lg" disabled>
-          <Plus className="h-4 w-4" />
-          Add bill (Phase 4)
-        </Button>
+        <ExpensesClient summary={summary} />
       </main>
     </>
   );
