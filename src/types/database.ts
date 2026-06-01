@@ -1,11 +1,3 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
-
 export type Profile = {
   id: string;
   email: string;
@@ -26,11 +18,13 @@ export type RentTracker = {
   created_at: string;
 };
 
+export type LoanType = "home" | "car" | "personal" | "other";
+
 export type EmiTracker = {
   id: string;
   user_id: string;
   lender_name: string;
-  loan_type: "home" | "car" | "personal" | "other";
+  loan_type: LoanType;
   amount_qar: number;
   due_day: number;
   reminder_days_before: number;
@@ -40,24 +34,23 @@ export type EmiTracker = {
   created_at: string;
 };
 
-export type ExpenseCategory =
-  | "utilities"
-  | "telecom"
-  | "subscription"
-  | "groceries"
-  | "transport"
-  | "other";
+export type TrackerKind = "rent" | "emi";
 
-export type MonthlyExpense = {
+export type PaymentRecord = {
   id: string;
   user_id: string;
-  name: string;
-  category: ExpenseCategory;
-  amount_qar: number;
-  due_day: number | null;
-  is_recurring: boolean;
+  kind: TrackerKind;
+  tracker_id: string;
+  amount_paid_qar: number;
+  amount_due_qar: number;
+  paid_at: string;
   month_year: string;
-  is_paid: boolean;
-  paid_at: string | null;
   created_at: string;
+};
+
+export const LOAN_TYPE_LABELS: Record<LoanType, string> = {
+  home: "Home loan",
+  car: "Car loan",
+  personal: "Personal loan",
+  other: "Other loan",
 };

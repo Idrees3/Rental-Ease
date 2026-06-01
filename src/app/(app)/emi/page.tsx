@@ -1,27 +1,28 @@
 import { AppHeader } from "@/components/layout/app-header";
-import { EmptyState } from "@/components/features/empty-state";
-import { Button } from "@/components/ui/button";
-import { Landmark, Plus } from "lucide-react";
+import { EmiList } from "@/components/emi/emi-list";
+import { getEmiTrackers } from "@/lib/data/emi";
+import { getPaymentsForMonth, getPaymentHistory } from "@/lib/data/payments";
 
 export const metadata = { title: "EMI & Loans" };
 
-export default function EmiPage() {
+export default async function EmiPage() {
+  const emis = await getEmiTrackers();
+  const payments = await getPaymentsForMonth();
+
+  const histories: Record<string, Awaited<ReturnType<typeof getPaymentHistory>>> =
+    {};
+  for (const emi of emis) {
+    histories[emi.id] = await getPaymentHistory("emi", emi.id);
+  }
+
   return (
     <>
       <AppHeader
-        title="EMI & loans"
-        subtitle="Track home, car, and personal loan payments"
+        title="Loans & EMI"
+        subtitle="Monthly loan payments in QAR"
       />
       <main className="space-y-4 px-4 py-4">
-        <EmptyState
-          icon={Landmark}
-          title="No loans tracked"
-          description="Add each EMI with lender, amount in QAR, and due day."
-        />
-        <Button className="w-full" size="lg" disabled>
-          <Plus className="h-4 w-4" />
-          Add loan (Phase 3)
-        </Button>
+        <EmiList emis={emis} payments={payments} histories={histories} />
       </main>
     </>
   );

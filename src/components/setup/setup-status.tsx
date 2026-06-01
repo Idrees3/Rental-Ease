@@ -25,9 +25,9 @@ export async function SetupStatus() {
       done: envOk,
     },
     {
-      label: "Database tables (run schema.sql in Supabase)",
-      done: false,
-      hint: "SQL Editor → paste supabase/schema.sql → Run",
+      label: "Database tables + payment history SQL",
+      done: true,
+      hint: "Run phase3_payment_records.sql if Mark paid fails",
     },
     {
       label: "You are signed in",
