@@ -2,18 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Landmark, Receipt, LayoutDashboard } from "lucide-react";
+import { Home, Landmark, Receipt, LayoutDashboard, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { UserRole } from "@/types/database";
 
-const links = [
+const payerLinks = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/rent", label: "Rent", icon: Home },
   { href: "/emi", label: "EMI", icon: Landmark },
   { href: "/expenses", label: "Bills", icon: Receipt },
+  { href: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
-export function BottomNav() {
+const collectorLinks = [
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { href: "/settings", label: "Settings", icon: Settings },
+] as const;
+
+export function BottomNav({ role }: { role: UserRole }) {
   const pathname = usePathname();
+  const links = role === "collector" ? collectorLinks : payerLinks;
 
   return (
     <nav

@@ -7,12 +7,14 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { UserRole } from "@/types/database";
 
 export function SignupForm() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("payer");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export function SignupForm() {
       email: email.trim(),
       password,
       options: {
-        data: { full_name: fullName.trim() || null },
+        data: { full_name: fullName.trim() || null, role },
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
       },
     });
@@ -86,6 +88,18 @@ export function SignupForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <p className="text-xs text-muted-foreground">At least 6 characters</p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="role">I am a</Label>
+        <select
+          id="role"
+          value={role}
+          onChange={(e) => setRole(e.target.value as UserRole)}
+          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="payer">Rent payer</option>
+          <option value="collector">Rent collector</option>
+        </select>
       </div>
       {error && (
         <p className="text-sm text-destructive" role="alert">

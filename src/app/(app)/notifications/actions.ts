@@ -38,6 +38,7 @@ export async function updateNotificationPrefs(formData: FormData) {
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/settings");
 }
 
 export async function sendMyDueReminders() {

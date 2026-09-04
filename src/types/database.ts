@@ -3,8 +3,17 @@ export type Profile = {
   email: string;
   full_name: string | null;
   onesignal_external_id: string | null;
+  push_enabled: boolean;
+  email_reminders: boolean;
+  role: UserRole;
+  trial_started_at: string;
+  trial_ends_at: string;
+  collector_plan: CollectorPlan;
   created_at: string;
 };
+
+export type UserRole = "payer" | "collector";
+export type CollectorPlan = "starter" | "growth" | "custom";
 
 export type RentTracker = {
   id: string;
@@ -103,3 +112,33 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   "transport",
   "other",
 ];
+
+export type CollectorProperty = {
+  id: string;
+  collector_id: string;
+  payer_id: string | null;
+  invite_code: string;
+  property_name: string;
+  payer_name: string | null;
+  payer_email: string | null;
+  monthly_rent_qar: number;
+  due_day: number;
+  remaining_balance_qar: number;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type PaymentConfirmationStatus = "submitted" | "received";
+
+export type RentPaymentConfirmation = {
+  id: string;
+  property_id: string;
+  payer_id: string;
+  collector_id: string;
+  amount_qar: number;
+  month_year: string;
+  status: PaymentConfirmationStatus;
+  submitted_at: string;
+  received_at: string | null;
+  created_at: string;
+};

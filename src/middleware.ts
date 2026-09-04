@@ -33,8 +33,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (pathname === "/" && !user) {
-    return NextResponse.redirect(new URL("/install", request.url));
+  if (pathname === "/install") {
+    return NextResponse.redirect(new URL("/download", request.url));
   }
 
   if (isPublicPath(pathname)) {

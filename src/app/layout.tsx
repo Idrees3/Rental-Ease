@@ -1,12 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Fraunces } from "next/font/google";
 import { OfflineBanner } from "@/components/layout/offline-banner";
 import { APP_NAME, APP_TAGLINE, APP_URL } from "@/lib/constants";
 import "./globals.css";
 
-const inter = Inter({
+const sans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
+});
+
+const display = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
 });
 
 export const metadata: Metadata = {
@@ -43,9 +48,9 @@ export default function RootLayout({
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
-      <body className={`${inter.variable} font-sans min-h-dvh`}>
+      <body className={`${sans.variable} ${display.variable} font-sans min-h-dvh antialiased`}>
         <OfflineBanner />
-        <div className="mx-auto min-h-dvh max-w-lg">{children}</div>
+        {children}
       </body>
     </html>
   );

@@ -1,5 +1,7 @@
 import { AppHeader } from "@/components/layout/app-header";
 import { ExpensesClient } from "@/components/expenses/expenses-client";
+import { Card, CardContent } from "@/components/ui/card";
+import { getAccountProfile, getPayerLinkedProperty } from "@/lib/data/account";
 import { getExpenseSummary } from "@/lib/data/expenses";
 import { currentMonthYear } from "@/lib/dates";
 
@@ -10,6 +12,39 @@ type ExpensesPageProps = {
 };
 
 export default async function ExpensesPage({ searchParams }: ExpensesPageProps) {
+  const account = await getAccountProfile();
+  const linkedProperty = await getPayerLinkedProperty();
+
+  if (!account || account.role !== "payer") {
+    return (
+      <>
+        <AppHeader title="Monthly bills" subtitle="Available for payer accounts only" />
+        <main className="px-4 py-4">
+          <Card>
+            <CardContent className="py-4 text-sm text-muted-foreground">
+              Collector accounts only use Collector Home and property dues.
+            </CardContent>
+          </Card>
+        </main>
+      </>
+    );
+  }
+
+  if (!linkedProperty) {
+    return (
+      <>
+        <AppHeader title="Monthly bills" subtitle="Connect with your collector first" />
+        <main className="px-4 py-4">
+          <Card>
+            <CardContent className="py-4 text-sm text-muted-foreground">
+              Enter your invite code in Home to unlock bills and expenses tracking.
+            </CardContent>
+          </Card>
+        </main>
+      </>
+    );
+  }
+
   const monthYear =
     searchParams.month && /^\d{4}-\d{2}$/.test(searchParams.month)
       ? searchParams.month

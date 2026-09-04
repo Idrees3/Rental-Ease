@@ -5,13 +5,21 @@ export const AUTH_PATHS = [
   "/reset-password",
 ] as const;
 
-export const PUBLIC_PATHS = ["/install", "/privacy"] as const;
+export const PUBLIC_PATHS = [
+  "/",
+  "/download",
+  "/install",
+  "/privacy",
+  "/terms",
+  "/support",
+] as const;
 
 export const PROTECTED_PATHS = [
   "/dashboard",
   "/rent",
   "/emi",
   "/expenses",
+  "/settings",
 ] as const;
 
 export function isAuthPath(pathname: string): boolean {

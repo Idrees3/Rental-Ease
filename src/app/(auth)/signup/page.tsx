@@ -7,7 +7,7 @@ export default function SignupPage() {
   return (
     <AuthCard
       title="Create account"
-      description="Track rent, EMI, and bills in QAR."
+      description="Choose payer or collector and start your 14-day free trial."
     >
       <SignupForm />
     </AuthCard>
