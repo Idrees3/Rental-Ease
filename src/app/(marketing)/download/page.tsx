@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function DownloadPage() {
   return (
-    <main className="bg-[#14080c] px-4 pb-20 pt-28 text-white sm:px-6">
+    <main className="bg-[#22161c] px-4 pb-20 pt-28 text-white sm:px-6">
       <div className="mx-auto max-w-3xl">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-maroon-light">
           Download

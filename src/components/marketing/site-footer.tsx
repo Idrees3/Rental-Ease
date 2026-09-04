@@ -3,18 +3,18 @@ import { APP_NAME } from "@/lib/constants";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#1a0a10] text-white/70">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 md:grid-cols-4">
+    <footer className="border-t border-white/15 bg-[#1c1218] text-white/75">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-14 sm:grid-cols-2 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
-          <p className="font-display text-2xl text-white">{APP_NAME}</p>
-          <p className="mt-2 max-w-sm text-sm leading-relaxed">
+          <p className="font-display text-3xl text-white">{APP_NAME}</p>
+          <p className="mt-3 max-w-sm text-base leading-relaxed">
             Rent reminders and payment tracking for Qatar — for people who pay
             rent and people who collect it.
           </p>
         </div>
         <div>
-          <p className="text-sm font-medium text-white">Product</p>
-          <ul className="mt-3 space-y-2 text-sm">
+          <p className="text-base font-medium text-white">Product</p>
+          <ul className="mt-3 space-y-2 text-base">
             <li>
               <Link href="/download" className="hover:text-white">
                 Download
@@ -33,8 +33,8 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <p className="text-sm font-medium text-white">Help</p>
-          <ul className="mt-3 space-y-2 text-sm">
+          <p className="text-base font-medium text-white">Help</p>
+          <ul className="mt-3 space-y-2 text-base">
             <li>
               <Link href="/support" className="hover:text-white">
                 Support
@@ -53,7 +53,7 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-white/40">
+      <div className="border-t border-white/15 px-4 py-4 text-center text-sm text-white/45">
         © {new Date().getFullYear()} {APP_NAME}. Built for Qatar. Under active
         development.
       </div>
