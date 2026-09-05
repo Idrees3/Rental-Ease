@@ -1,4 +1,4 @@
-import { BottomNav } from "@/components/layout/bottom-nav";
+import { AppShell } from "@/components/layout/app-shell";
 import { OneSignalInit } from "@/components/notifications/onesignal-init";
 import { createClient } from "@/lib/supabase/server";
 import { getAccountProfile } from "@/lib/data/account";
@@ -18,10 +18,11 @@ export default async function AppLayout({
   const role = account?.role ?? "payer";
 
   return (
-    <div className="mx-auto min-h-dvh max-w-lg bg-background pb-nav">
+    <>
       {user && appId ? <OneSignalInit userId={user.id} appId={appId} /> : null}
-      {children}
-      <BottomNav role={role} />
-    </div>
+      <AppShell role={role} email={account?.email ?? user?.email}>
+        {children}
+      </AppShell>
+    </>
   );
 }

@@ -1,72 +1,46 @@
-# Rental Ease — product decisions (locked)
+# Rental Ease — product decisions
 
-Last updated from founder input.
+Last updated: September 2026
 
 ## Brand & domain
 
 | Item | Value |
 |------|--------|
 | App name | **Rental Ease** |
-| Domain | **https://rentalease.app** (purchased) |
+| Domain | **https://rentalease.app** |
 | Currency | QAR |
-| Audience | Qatar expats (scale: thousands) |
+| Audience | Qatar tenants (payers) and landlords (collectors) |
 
-## Product shape — app only
+## Product shape — website first
 
-- **Not** a “use in browser daily” SaaS.
-- Users **install** the app (home screen / store), then sign in **inside the app** (fullscreen).
-- Domain hosts: **install/download**, legal pages, optional upgrade — not a public web dashboard.
+- Primary product: **live website SaaS** (desktop + mobile browser).
+- Same features on web and optional install (PWA / later Play Store).
+- Domain hosts marketing, signup/login, full dashboards, support, and download/install help.
 
-## Install channels (v1)
+## Pricing (Stripe ready)
 
-| Platform | Channel |
-|----------|---------|
-| **Android** | Google **Play Store** + **direct download** from rentalease.app (APK on site first if Play review is pending) |
-| **iOS** | **Install from domain only** (Safari → Add to Home Screen) — **no** App Store, **no** $99/year |
-| **Browser** | Install/landing only — not the main product |
+| Plan | Price |
+|------|--------|
+| Payer | 20 QAR / month |
+| Collector Starter | 50 QAR / month (≤10 properties) |
+| Collector Growth | 300 QAR / month (≤100) |
+| Custom add-on | +5 QAR per property above 10 |
+| Trial | 14 days free |
+
+## Channels
+
+| Platform | Status |
+|----------|--------|
+| Website | Primary — live now |
+| PWA / Add to Home Screen | Optional |
+| Android Play Store | Later wrapper of same web product |
+| iOS | Install from site (no App Store fee) |
 
 ## Integrations
 
-| Service | Status | Use |
-|---------|--------|-----|
-| Supabase | Connected | Auth, database, RLS |
-| Resend | Account created | Password reset, rent/EMI/bill emails |
-| OneSignal | Account created | Push reminders |
-| Lemon Squeezy | Later | Pro plan on web (if paid tier) |
-| Google Play IAP | Later | If selling digital Pro inside Play app |
-
-## Auth (Phase 2)
-
-- **Email + password** + forgot password (not magic-link-only).
-
-## Core features (v1)
-
-- Multiple **rent** properties
-- Multiple **EMI / loans** (months remaining)
-- **Monthly bills** (utilities, telecom, etc.)
-- **Grocery / budgets** with progress + alerts
-- Mark **paid** (full or different amount) + history
-- **Due this week** (highlight today)
-- Month switch, donut chart, text export
-- PWA: offline message, install experience
-
-## Production URLs (configure in dashboards)
-
-| Service | URL |
+| Service | Use |
 |---------|-----|
-| Site / app | `https://rentalease.app` |
-| Auth callback | `https://rentalease.app/auth/callback` |
-| Install page (planned) | `https://rentalease.app/install` |
-| Local dev | `http://localhost:3000` |
-
-Supabase → Authentication → URL Configuration: add **both** localhost and production URLs.
-
-## Build phases
-
-1. Foundation — done (shell, Supabase keys)
-2. Auth — password, protected app, forgot password
-3. Reminders — rent, EMI, push, email
-4. Expenses — budgets, charts, export
-5. Install — domain page, Play Store, PWA fullscreen, offline
-
-Start coding a phase only when you say: **Start Phase N**.
+| Supabase | Auth, database, RLS |
+| Resend | Email reminders |
+| OneSignal | Push (optional) |
+| Stripe | Subscriptions (env keys when ready) |

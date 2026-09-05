@@ -19,10 +19,10 @@ export default async function ExpensesPage({ searchParams }: ExpensesPageProps) 
     return (
       <>
         <AppHeader title="Monthly bills" subtitle="Available for payer accounts only" />
-        <main className="px-4 py-4">
+        <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="py-4 text-sm text-muted-foreground">
-              Collector accounts only use Collector Home and property dues.
+              Collector accounts use Overview and Properties.
             </CardContent>
           </Card>
         </main>
@@ -34,7 +34,7 @@ export default async function ExpensesPage({ searchParams }: ExpensesPageProps) 
     return (
       <>
         <AppHeader title="Monthly bills" subtitle="Connect with your collector first" />
-        <main className="px-4 py-4">
+        <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="py-4 text-sm text-muted-foreground">
               Enter your invite code in Home to unlock bills and expenses tracking.
@@ -58,7 +58,7 @@ export default async function ExpensesPage({ searchParams }: ExpensesPageProps) 
         title="Monthly bills"
         subtitle="Track utilities, grocery & more in QAR"
       />
-      <main className="space-y-4 px-4 py-4">
+      <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
         <ExpensesClient summary={summary} />
       </main>
     </>

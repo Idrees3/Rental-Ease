@@ -89,17 +89,17 @@ export default function LandingPage() {
               href="/signup"
               className="rounded-full bg-white px-7 py-3.5 text-base font-semibold text-maroon transition hover:bg-white/90"
             >
-              Start 14-day free trial
+              Start free on the web
             </Link>
             <Link
               href="/download"
               className="rounded-full border border-white/50 px-7 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
             >
-              Download app
+              Optional install
             </Link>
           </div>
-          <p className="mt-5 text-sm text-white/65">
-            Live in Qatar · under active development · billing coming soon
+          <p className="mt-4 text-sm text-white/65">
+            Full website SaaS · works on desktop & mobile · install optional
           </p>
         </div>
       </section>

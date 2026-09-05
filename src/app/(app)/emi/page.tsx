@@ -19,10 +19,10 @@ export default async function EmiPage() {
     return (
       <>
         <AppHeader title="Loans & EMI" subtitle="Available for payer accounts only" />
-        <main className="px-4 py-4">
+        <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="py-4 text-sm text-muted-foreground">
-              Collector accounts focus on dues and payment confirmations.
+              Collector accounts focus on Overview and Properties.
             </CardContent>
           </Card>
         </main>
@@ -34,7 +34,7 @@ export default async function EmiPage() {
     return (
       <>
         <AppHeader title="Loans & EMI" subtitle="Connect with your collector first" />
-        <main className="px-4 py-4">
+        <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="py-4 text-sm text-muted-foreground">
               Enter an invite code in Home to unlock payer features.
@@ -59,7 +59,7 @@ export default async function EmiPage() {
   return (
     <>
       <AppHeader title="Loans & EMI" subtitle="Monthly loan payments in QAR" />
-      <main className="space-y-4 px-4 py-4">
+      <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
         <EmiList emis={emis} payments={payments} histories={histories} />
       </main>
     </>

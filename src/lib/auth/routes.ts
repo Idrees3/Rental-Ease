@@ -20,6 +20,8 @@ export const PROTECTED_PATHS = [
   "/emi",
   "/expenses",
   "/settings",
+  "/billing",
+  "/properties",
 ] as const;
 
 export function isAuthPath(pathname: string): boolean {

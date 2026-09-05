@@ -1,12 +1,12 @@
 {
   "name": "Rental Ease",
   "short_name": "Rental Ease",
-  "description": "Rent, EMI & bills for Qatar expats",
+  "description": "Rent tracking for Qatar — website SaaS for payers and collectors",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#8A1538",
-  "orientation": "portrait",
+  "orientation": "any",
   "icons": [
     {
       "src": "/icon.svg",

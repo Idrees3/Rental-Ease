@@ -115,7 +115,7 @@ export function NotificationsCard({
               })
             }
           >
-            Allow push on this phone
+            Allow push notifications on this device
           </Button>
         )}
 

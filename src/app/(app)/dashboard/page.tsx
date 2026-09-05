@@ -25,8 +25,8 @@ export default async function DashboardPage() {
     return (
       <>
         <AppHeader
-          title="Collector"
-          subtitle="Dues, invite codes, and payments"
+          title="Overview"
+          subtitle="Collect rent smoothly across Qatar"
         />
         <CollectorDashboard
           plan={account.collector_plan}

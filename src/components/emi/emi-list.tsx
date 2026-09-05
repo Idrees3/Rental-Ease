@@ -36,7 +36,7 @@ export function EmiList({ emis, payments, histories }: EmiListProps) {
     <>
       {emis.length === 0 ? (
         <p className="rounded-xl border border-dashed bg-muted/30 px-4 py-8 text-center text-sm text-muted-foreground">
-          No loans yet. Tap below to add home, car, or personal loan EMI.
+          No loans yet. Add a home, car, or personal loan EMI below.
         </p>
       ) : (
         <ul className="space-y-3">

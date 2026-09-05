@@ -17,12 +17,12 @@ export default async function SettingsPage() {
   return (
     <>
       <AppHeader title="Settings" subtitle="Account & notifications" />
-      <main className="mx-auto max-w-lg space-y-4 px-4 py-4">
-        <Card>
+      <main className="mx-auto max-w-4xl space-y-4 px-4 py-6 sm:px-6 lg:px-8">
+        <Card className="shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Account</CardTitle>
+            <CardTitle className="font-display text-xl">Account</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1 text-sm">
+          <CardContent className="space-y-1 text-base">
             <p>
               <span className="text-muted-foreground">Email:</span> {account.email}
             </p>
@@ -40,9 +40,9 @@ export default async function SettingsPage() {
                 <span className="capitalize">{account.collector_plan}</span>
               </p>
             )}
-            <p className="pt-2 text-xs text-muted-foreground">
-              Stripe billing is off while testing. Prices later: payer 20 QAR/mo;
-              collector 50 / 300 QAR or +5 QAR per property.
+            <p className="pt-2 text-sm text-muted-foreground">
+              Use Billing in the sidebar to subscribe when Stripe is connected.
+              Until then the full website product stays open for testing.
             </p>
           </CardContent>
         </Card>

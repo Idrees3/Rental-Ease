@@ -71,11 +71,11 @@ export function PayerDashboard({
   }
 
   return (
-    <main className="mx-auto max-w-lg space-y-4 px-4 py-4">
+    <main className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
       {(message || error) && (
         <p
-          className={`rounded-lg px-3 py-2 text-sm ${
-            error ? "bg-red-50 text-red-800" : "bg-green-50 text-green-800"
+          className={`rounded-xl px-4 py-3 text-sm ${
+            error ? "bg-red-50 text-red-800" : "bg-emerald-50 text-emerald-800"
           }`}
           role="status"
         >
@@ -83,199 +83,216 @@ export function PayerDashboard({
         </p>
       )}
 
-      {!linkedProperty ? (
-        <Card className="border-maroon/30">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Link2 className="h-4 w-4 text-maroon" />
-              Connect to your collector
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Ask your landlord/collector for their invite code. Payer features
-              unlock after you connect.
-            </p>
-            <form
-              className="flex gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const fd = new FormData(e.currentTarget);
-                runAction(
-                  () => connectPayerByInviteCode(fd),
-                  "Connected! You can now track rent and mark payments."
-                );
-              }}
-            >
-              <Input
-                name="invite_code"
-                placeholder="Invite code"
-                className="uppercase"
-                required
-              />
-              <Button type="submit" disabled={pendingUi}>
-                Connect
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="border-maroon/20 bg-gradient-to-br from-maroon/5 to-transparent">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Your linked rent</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-lg font-semibold">{linkedProperty.property_name}</p>
-              <p className="text-sm text-muted-foreground">
-                Due day {linkedProperty.due_day} ·{" "}
-                {formatQAR(linkedProperty.monthly_rent_qar)}/mo
-              </p>
-            </div>
-            <form
-              className="flex gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const fd = new FormData(e.currentTarget);
-                runAction(
-                  () => submitRentPayment(fd),
-                  "Payment submitted. Waiting for collector to mark received."
-                );
-              }}
-            >
-              <input type="hidden" name="property_id" value={linkedProperty.id} />
-              <Input
-                name="amount_qar"
-                type="number"
-                min="1"
-                step="0.01"
-                defaultValue={linkedProperty.monthly_rent_qar}
-                required
-              />
-              <Button type="submit" disabled={pendingUi}>
-                I paid
-              </Button>
-            </form>
-            <p className="text-xs text-muted-foreground">
-              Collector must tap Received before status updates on both sides.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {dueThisWeek.length > 0 && (
-        <Card className="border-red-200 bg-red-50/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base text-red-900">
-              <AlertCircle className="h-4 w-4" />
-              Due this week
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {dueThisWeek.map((item) => (
-              <Link
-                key={`${item.kind}-${item.id}`}
-                href={item.href}
-                className="flex items-center justify-between gap-2 rounded-lg bg-white/80 px-3 py-2"
-              >
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="space-y-6">
+          {!linkedProperty ? (
+            <Card className="border-maroon/20 shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 font-display text-2xl">
+                  <Link2 className="h-5 w-5 text-maroon" />
+                  Connect to your collector
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-base text-muted-foreground">
+                  Ask your landlord for an invite code. Payer features unlock
+                  after you connect.
+                </p>
+                <form
+                  className="flex flex-col gap-2 sm:flex-row"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const fd = new FormData(e.currentTarget);
+                    runAction(
+                      () => connectPayerByInviteCode(fd),
+                      "Connected! You can now track rent and mark payments."
+                    );
+                  }}
+                >
+                  <Input
+                    name="invite_code"
+                    placeholder="Invite code"
+                    className="uppercase"
+                    required
+                  />
+                  <Button type="submit" disabled={pendingUi}>
+                    Connect
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-maroon/15 bg-gradient-to-br from-maroon/[0.05] to-white shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="font-display text-2xl">
+                  Your linked rent
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.kind === "rent" ? "Rent" : "EMI"}
+                  <p className="text-xl font-semibold">
+                    {linkedProperty.property_name}
+                  </p>
+                  <p className="text-base text-muted-foreground">
+                    Due day {linkedProperty.due_day} ·{" "}
+                    {formatQAR(linkedProperty.monthly_rent_qar)}/mo
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold">{formatQAR(item.amount_qar)}</p>
-                  <DueBadge status={item.status} label={item.statusLabel} />
-                </div>
-              </Link>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Wallet className="h-4 w-4 text-maroon" />
-            This month overview
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-semibold text-maroon">
-            {formatQAR(upcomingTotal)}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {rentCount} rent · {emiCount} loans · {expenseCount} bills
-          </p>
-        </CardContent>
-      </Card>
-
-      {paymentConfirmations.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-medium text-muted-foreground">
-            Payment status
-          </h2>
-          {paymentConfirmations.slice(0, 5).map((item) => (
-            <Card key={item.id}>
-              <CardContent className="flex items-center justify-between gap-3 py-3">
-                <div>
-                  <p className="font-medium">{formatQAR(item.amount_qar)}</p>
-                  <p className="text-xs text-muted-foreground">{item.month_year}</p>
-                </div>
-                <p
-                  className={
-                    item.status === "received"
-                      ? "text-xs font-medium text-green-700"
-                      : "text-xs font-medium text-amber-700"
-                  }
+                <form
+                  className="flex flex-col gap-2 sm:flex-row"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const fd = new FormData(e.currentTarget);
+                    runAction(
+                      () => submitRentPayment(fd),
+                      "Payment submitted. Waiting for collector to mark received."
+                    );
+                  }}
                 >
-                  {item.status === "received"
-                    ? "Received"
-                    : "Waiting confirmation"}
+                  <input
+                    type="hidden"
+                    name="property_id"
+                    value={linkedProperty.id}
+                  />
+                  <Input
+                    name="amount_qar"
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    defaultValue={linkedProperty.monthly_rent_qar}
+                    required
+                  />
+                  <Button type="submit" disabled={pendingUi}>
+                    I paid
+                  </Button>
+                </form>
+                <p className="text-sm text-muted-foreground">
+                  Collector must tap Received before status updates on both
+                  sides.
                 </p>
               </CardContent>
             </Card>
-          ))}
-        </section>
-      )}
+          )}
 
-      {linkedProperty && (
-        <section className="space-y-3">
-          <h2 className="text-sm font-medium text-muted-foreground">Track more</h2>
-          <SummaryCard
-            title="Rent"
-            description={
-              rentCount
-                ? `${rentCount} home${rentCount > 1 ? "s" : ""} tracked`
-                : "Add your rent tracker"
-            }
-            amount={rentCount ? rentTotal : undefined}
-            href="/rent"
-            accent="maroon"
-          />
-          <SummaryCard
-            title="Loans & EMI"
-            description={
-              emiCount
-                ? `${emiCount} loan${emiCount > 1 ? "s" : ""} tracked`
-                : "Add a loan"
-            }
-            amount={emiCount ? emiTotal : undefined}
-            href="/emi"
-          />
-          <SummaryCard
-            title="Monthly bills"
-            description={
-              expenseCount
-                ? `${expenseCount} bill${expenseCount > 1 ? "s" : ""} this month`
-                : "Track utilities & grocery"
-            }
-            amount={expenseTotal > 0 ? expenseTotal : undefined}
-            href="/expenses"
-          />
-        </section>
-      )}
+          {dueThisWeek.length > 0 && (
+            <Card className="border-red-200 bg-red-50/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-lg text-red-900">
+                  <AlertCircle className="h-5 w-5" />
+                  Due this week
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {dueThisWeek.map((item) => (
+                  <Link
+                    key={`${item.kind}-${item.id}`}
+                    href={item.href}
+                    className="flex items-center justify-between gap-2 rounded-xl bg-white/90 px-4 py-3"
+                  >
+                    <div>
+                      <p className="font-medium">{item.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.kind === "rent" ? "Rent" : "EMI"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">
+                        {formatQAR(item.amount_qar)}
+                      </p>
+                      <DueBadge status={item.status} label={item.statusLabel} />
+                    </div>
+                  </Link>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          <Card className="shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 font-display text-2xl">
+                <Wallet className="h-5 w-5 text-maroon" />
+                This month overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-display text-4xl text-maroon">
+                {formatQAR(upcomingTotal)}
+              </p>
+              <p className="mt-2 text-base text-muted-foreground">
+                {rentCount} rent · {emiCount} loans · {expenseCount} bills
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="space-y-6">
+          {paymentConfirmations.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="font-display text-xl">Payment status</h2>
+              {paymentConfirmations.slice(0, 6).map((item) => (
+                <Card key={item.id} className="shadow-sm">
+                  <CardContent className="flex items-center justify-between gap-3 py-4">
+                    <div>
+                      <p className="font-medium">{formatQAR(item.amount_qar)}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.month_year}
+                      </p>
+                    </div>
+                    <p
+                      className={
+                        item.status === "received"
+                          ? "text-sm font-medium text-emerald-700"
+                          : "text-sm font-medium text-amber-700"
+                      }
+                    >
+                      {item.status === "received"
+                        ? "Received"
+                        : "Waiting confirmation"}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </section>
+          )}
+
+          {linkedProperty && (
+            <section className="space-y-3">
+              <h2 className="font-display text-xl">Track more</h2>
+              <SummaryCard
+                title="Rent"
+                description={
+                  rentCount
+                    ? `${rentCount} home${rentCount > 1 ? "s" : ""} tracked`
+                    : "Add your rent tracker"
+                }
+                amount={rentCount ? rentTotal : undefined}
+                href="/rent"
+                accent="maroon"
+              />
+              <SummaryCard
+                title="Loans & EMI"
+                description={
+                  emiCount
+                    ? `${emiCount} loan${emiCount > 1 ? "s" : ""} tracked`
+                    : "Add a loan"
+                }
+                amount={emiCount ? emiTotal : undefined}
+                href="/emi"
+              />
+              <SummaryCard
+                title="Monthly bills"
+                description={
+                  expenseCount
+                    ? `${expenseCount} bill${expenseCount > 1 ? "s" : ""} this month`
+                    : "Track utilities & grocery"
+                }
+                amount={expenseTotal > 0 ? expenseTotal : undefined}
+                href="/expenses"
+              />
+            </section>
+          )}
+        </div>
+      </div>
     </main>
   );
 }

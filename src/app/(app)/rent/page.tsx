@@ -19,10 +19,10 @@ export default async function RentPage() {
     return (
       <>
         <AppHeader title="Rent" subtitle="Available for payer accounts only" />
-        <main className="px-4 py-4">
+        <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="py-4 text-sm text-muted-foreground">
-              Collector accounts manage rent from Collector Home.
+              Collector accounts manage rent from Overview and Properties.
             </CardContent>
           </Card>
         </main>
@@ -34,7 +34,7 @@ export default async function RentPage() {
     return (
       <>
         <AppHeader title="Rent" subtitle="Connect with your collector first" />
-        <main className="px-4 py-4">
+        <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="py-4 text-sm text-muted-foreground">
               Ask your collector for an invite code, then connect from Home.
@@ -59,7 +59,7 @@ export default async function RentPage() {
   return (
     <>
       <AppHeader title="Rent" subtitle="Your home rent — amounts in QAR" />
-      <main className="space-y-4 px-4 py-4">
+      <main className="space-y-4 px-4 py-6 sm:px-6 lg:px-8">
         <RentList rents={rents} payments={payments} histories={histories} />
       </main>
     </>
