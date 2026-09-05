@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Building2, CheckCircle2, Copy, Mail } from "lucide-react";
+import { Building2, CheckCircle2, Copy, KeyRound, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FilledBar, MonthHero } from "@/components/dashboard/month-bars";
 import { formatQAR } from "@/lib/utils";
 import type {
   CollectorPlan,
@@ -23,19 +24,28 @@ type Props = {
   plan: CollectorPlan;
   properties: CollectorProperty[];
   pending: RentPaymentConfirmation[];
+  receivedThisMonth: number;
   trialEndsAt: string;
   mode?: "overview" | "properties";
+  monthLabel: string;
+  day: number;
+  daysInMonth: number;
 };
 
 export function CollectorDashboard({
   plan,
   properties,
   pending,
+  receivedThisMonth,
   trialEndsAt,
   mode = "overview",
+  monthLabel,
+  day,
+  daysInMonth,
 }: Props) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [latestInvite, setLatestInvite] = useState<string | null>(null);
   const [pendingUi, startTransition] = useTransition();
 
   const dueTotal = properties.reduce(
@@ -47,6 +57,9 @@ export function CollectorDashboard({
     0
   );
   const linkedCount = properties.filter((p) => p.payer_id).length;
+  const collectedPct = dueTotal > 0 ? (receivedThisMonth / dueTotal) * 100 : 0;
+  const linkedPct =
+    properties.length > 0 ? (linkedCount / properties.length) * 100 : 0;
 
   function runAction(action: () => Promise<void>, okMessage: string) {
     setMessage(null);
@@ -74,82 +87,170 @@ export function CollectorDashboard({
         </p>
       )}
 
+      {latestInvite && (
+        <Card className="border-maroon/30 bg-maroon/[0.04] shadow-md">
+          <CardContent className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <KeyRound className="mt-1 h-6 w-6 text-maroon" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  New invitation code — share with your payer
+                </p>
+                <p className="mt-1 font-mono text-3xl font-bold tracking-[0.2em] text-maroon">
+                  {latestInvite}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={async () => {
+                await navigator.clipboard.writeText(latestInvite);
+                setMessage("Invitation code copied.");
+              }}
+            >
+              <Copy className="h-4 w-4" />
+              Copy code
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {mode === "overview" && (
         <>
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {[
-              { label: "Properties", value: String(properties.length) },
-              { label: "Linked payers", value: String(linkedCount) },
-              { label: "Pending reviews", value: String(pending.length) },
-              { label: "Expected / month", value: formatQAR(dueTotal) },
-            ].map((stat) => (
-              <Card key={stat.label} className="border-maroon/10 shadow-sm">
-                <CardContent className="space-y-1 p-5">
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="font-display text-3xl text-maroon">{stat.value}</p>
-                </CardContent>
-              </Card>
-            ))}
+          <MonthHero
+            title={monthLabel}
+            subtitle="Track collection progress across every property"
+            day={day}
+            daysInMonth={daysInMonth}
+          >
+            <p className="mt-4 text-sm text-white/75">
+              Plan <span className="capitalize text-white">{plan}</span> · Trial
+              until {new Date(trialEndsAt).toLocaleDateString()}
+            </p>
+          </MonthHero>
+
+          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <FilledBar
+              label="Month elapsed"
+              valueLabel={`Day ${day} / ${daysInMonth}`}
+              percent={(day / daysInMonth) * 100}
+              tone="maroon"
+            />
+            <FilledBar
+              label="Collected this month"
+              valueLabel={`${formatQAR(receivedThisMonth)} of ${formatQAR(dueTotal)}`}
+              percent={collectedPct}
+              tone={collectedPct >= 100 ? "emerald" : "amber"}
+              hint="Confirmed Received payments"
+            />
+            <FilledBar
+              label="Payers linked"
+              valueLabel={`${linkedCount} of ${properties.length} properties`}
+              percent={linkedPct}
+              tone="emerald"
+            />
+            <FilledBar
+              label="Outstanding balance"
+              valueLabel={formatQAR(balanceTotal)}
+              percent={
+                dueTotal + balanceTotal > 0
+                  ? (balanceTotal / (dueTotal + balanceTotal)) * 100
+                  : 0
+              }
+              tone="slate"
+            />
           </section>
 
-          <Card className="overflow-hidden border-maroon/15 bg-gradient-to-br from-maroon/[0.06] to-white">
-            <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Collector plan</p>
-                <p className="mt-1 font-display text-2xl capitalize text-foreground">
-                  {plan}
+          <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+            <Card className="border-maroon/10 shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-display text-2xl">
+                  <KeyRound className="h-5 w-5 text-maroon" />
+                  Invitation codes
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Each property gets a unique code. Share it with the payer so
+                  they can connect in the app.
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Outstanding balance {formatQAR(balanceTotal)} · Trial until{" "}
-                  {new Date(trialEndsAt).toLocaleDateString()}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button asChild variant="outline">
-                  <Link href="/properties">Manage properties</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/billing">View billing</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                {properties.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed p-6 text-center">
+                    <Building2 className="mx-auto h-8 w-8 text-maroon/40" />
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      No codes yet. Add a property to generate your first
+                      invitation code.
+                    </p>
+                    <Button asChild className="mt-4">
+                      <Link href="/properties">Add property</Link>
+                    </Button>
+                  </div>
+                ) : (
+                  properties.map((property) => (
+                    <div
+                      key={property.id}
+                      className="flex flex-col gap-3 rounded-2xl bg-muted/50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div>
+                        <p className="font-medium">{property.property_name}</p>
+                        <p className="font-mono text-xl font-bold tracking-widest text-maroon">
+                          {property.invite_code}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {property.payer_id
+                            ? `Linked · ${property.payer_name ?? "Payer"}`
+                            : "Waiting for payer to connect"}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(
+                            property.invite_code
+                          );
+                          setMessage(`Copied ${property.invite_code}`);
+                        }}
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                        Copy
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
 
-          <section className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="font-display text-2xl">Needs confirmation</h2>
-              <span className="text-sm text-muted-foreground">
-                {pending.length} waiting
-              </span>
-            </div>
-            {pending.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="py-10 text-center text-muted-foreground">
-                  No pending payments. You’re all caught up.
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-3 lg:grid-cols-2">
-                {pending.map((item) => {
-                  const property = properties.find(
-                    (p) => p.id === item.property_id
-                  );
-                  return (
-                    <Card key={item.id} className="border-amber-200 bg-amber-50/40">
-                      <CardContent className="flex items-center justify-between gap-3 py-5">
+            <Card className="border-maroon/10 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-display text-2xl">
+                  Needs confirmation
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pending.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    No pending payments. You’re all caught up.
+                  </p>
+                ) : (
+                  pending.map((item) => {
+                    const property = properties.find(
+                      (p) => p.id === item.property_id
+                    );
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50/50 p-4"
+                      >
                         <div>
                           <p className="font-semibold">
                             {formatQAR(item.amount_qar)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {property?.property_name ?? "Property"} ·{" "}
-                            {item.month_year}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {property?.payer_name ?? "Payer"} marked paid
+                            {property?.property_name ?? "Property"}
                           </p>
                         </div>
                         <Button
+                          size="sm"
                           disabled={pendingUi}
                           onClick={() => {
                             const fd = new FormData();
@@ -165,78 +266,44 @@ export function CollectorDashboard({
                           <CheckCircle2 className="h-4 w-4" />
                           Received
                         </Button>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-2xl">Recent properties</h2>
-              <Link
-                href="/properties"
-                className="text-sm font-medium text-maroon hover:underline"
-              >
-                See all
-              </Link>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2">
-              {properties.slice(0, 4).map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  pendingUi={pendingUi}
-                  onRemind={() => {
-                    const fd = new FormData();
-                    fd.set("property_id", property.id);
-                    runAction(
-                      () => sendCollectorReminder(fd),
-                      "Reminder email sent."
+                      </div>
                     );
-                  }}
-                  onCopy={() => {
-                    void navigator.clipboard.writeText(property.invite_code);
-                    setMessage("Invite code copied.");
-                  }}
-                />
-              ))}
-              {properties.length === 0 && (
-                <Card className="md:col-span-2">
-                  <CardContent className="py-10 text-center text-muted-foreground">
-                    <Building2 className="mx-auto mb-3 h-8 w-8 text-maroon/40" />
-                    Add your first property to generate an invite code.
-                    <div className="mt-4">
-                      <Button asChild>
-                        <Link href="/properties">Add property</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+                  })
+                )}
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/properties">Manage all properties</Link>
+                </Button>
+              </CardContent>
+            </Card>
           </section>
         </>
       )}
 
       {mode === "properties" && (
         <>
-          <Card>
+          <Card className="border-maroon/10 shadow-sm">
             <CardHeader>
-              <CardTitle className="font-display text-2xl">Add property</CardTitle>
+              <CardTitle className="font-display text-2xl">
+                Add property & get invitation code
+              </CardTitle>
             </CardHeader>
             <CardContent>
+              <p className="mb-4 text-sm text-muted-foreground">
+                After you save, a unique invitation code is created automatically.
+                Send that code to your rent payer.
+              </p>
               <form
                 className="grid gap-4 md:grid-cols-2"
                 onSubmit={(e) => {
                   e.preventDefault();
                   const fd = new FormData(e.currentTarget);
                   runAction(async () => {
-                    await createCollectorProperty(fd);
+                    const result = await createCollectorProperty(fd);
+                    if (result?.inviteCode) {
+                      setLatestInvite(result.inviteCode);
+                    }
                     e.currentTarget.reset();
-                  }, "Property added. Share the invite code with your payer.");
+                  }, "Property added. Invitation code is ready below.");
                 }}
               >
                 <div className="space-y-1.5 md:col-span-2">
@@ -290,8 +357,8 @@ export function CollectorDashboard({
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <Button type="submit" disabled={pendingUi} className="w-full sm:w-auto">
-                    {pendingUi ? "Saving…" : "Save property"}
+                  <Button type="submit" disabled={pendingUi}>
+                    {pendingUi ? "Creating…" : "Save & generate invite code"}
                   </Button>
                 </div>
               </form>
@@ -300,111 +367,100 @@ export function CollectorDashboard({
 
           <section className="space-y-3">
             <h2 className="font-display text-2xl">
-              All properties ({properties.length})
+              Properties ({properties.length})
             </h2>
             <div className="grid gap-4 lg:grid-cols-2">
               {properties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  pendingUi={pendingUi}
-                  onRemind={() => {
-                    const fd = new FormData();
-                    fd.set("property_id", property.id);
-                    runAction(
-                      () => sendCollectorReminder(fd),
-                      "Reminder email sent."
-                    );
-                  }}
-                  onCopy={() => {
-                    void navigator.clipboard.writeText(property.invite_code);
-                    setMessage("Invite code copied.");
-                  }}
-                />
-              ))}
-              {properties.length === 0 && (
-                <Card className="lg:col-span-2 border-dashed">
-                  <CardContent className="py-12 text-center text-muted-foreground">
-                    No properties yet. Use the form above to add one.
+                <Card key={property.id} className="border-maroon/10 shadow-sm">
+                  <CardContent className="space-y-4 py-5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-lg font-semibold">
+                          {property.property_name}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Due day {property.due_day} ·{" "}
+                          {formatQAR(property.monthly_rent_qar)}/mo
+                        </p>
+                      </div>
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                          property.payer_id
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-amber-100 text-amber-900"
+                        }`}
+                      >
+                        {property.payer_id ? "Linked" : "Share invite"}
+                      </span>
+                    </div>
+
+                    <div className="rounded-2xl bg-maroon/[0.06] px-4 py-3">
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Invitation code
+                      </p>
+                      <div className="mt-1 flex items-center justify-between gap-2">
+                        <p className="font-mono text-2xl font-bold tracking-widest text-maroon">
+                          {property.invite_code}
+                        </p>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(
+                              property.invite_code
+                            );
+                            setMessage("Invitation code copied.");
+                          }}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                          Copy
+                        </Button>
+                      </div>
+                    </div>
+
+                    <FilledBar
+                      label="Balance remaining"
+                      valueLabel={formatQAR(property.remaining_balance_qar)}
+                      percent={
+                        Number(property.monthly_rent_qar) > 0
+                          ? (Number(property.remaining_balance_qar) /
+                              Number(property.monthly_rent_qar)) *
+                            100
+                          : 0
+                      }
+                      tone="slate"
+                    />
+
+                    <p className="text-sm text-muted-foreground">
+                      Payer: {property.payer_name ?? "Not connected"}
+                      {property.payer_email ? ` · ${property.payer_email}` : ""}
+                    </p>
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full"
+                      disabled={pendingUi || !property.payer_email}
+                      onClick={() => {
+                        const fd = new FormData();
+                        fd.set("property_id", property.id);
+                        runAction(
+                          () => sendCollectorReminder(fd),
+                          "Reminder email sent."
+                        );
+                      }}
+                    >
+                      <Mail className="h-4 w-4" />
+                      Send reminder
+                    </Button>
                   </CardContent>
                 </Card>
-              )}
+              ))}
             </div>
           </section>
         </>
       )}
     </main>
-  );
-}
-
-function PropertyCard({
-  property,
-  pendingUi,
-  onRemind,
-  onCopy,
-}: {
-  property: CollectorProperty;
-  pendingUi: boolean;
-  onRemind: () => void;
-  onCopy: () => void;
-}) {
-  return (
-    <Card className="border-maroon/10 shadow-sm">
-      <CardContent className="space-y-4 py-5">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-lg font-semibold">{property.property_name}</p>
-            <p className="text-sm text-muted-foreground">
-              Due day {property.due_day} · {formatQAR(property.monthly_rent_qar)}
-              /mo
-            </p>
-          </div>
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-              property.payer_id
-                ? "bg-emerald-100 text-emerald-800"
-                : "bg-slate-100 text-slate-700"
-            }`}
-          >
-            {property.payer_id ? "Linked" : "Waiting"}
-          </span>
-        </div>
-
-        <div className="rounded-xl bg-muted/60 px-4 py-3">
-          <p className="text-xs text-muted-foreground">Invite code</p>
-          <div className="mt-1 flex items-center justify-between gap-2">
-            <p className="font-mono text-lg font-semibold tracking-wider">
-              {property.invite_code}
-            </p>
-            <Button type="button" size="sm" variant="outline" onClick={onCopy}>
-              <Copy className="h-3.5 w-3.5" />
-              Copy
-            </Button>
-          </div>
-        </div>
-
-        <p className="text-sm">
-          Balance:{" "}
-          <span className="font-semibold">
-            {formatQAR(property.remaining_balance_qar)}
-          </span>
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Payer: {property.payer_name ?? "Not connected"}
-          {property.payer_email ? ` · ${property.payer_email}` : ""}
-        </p>
-
-        <Button
-          size="sm"
-          variant="outline"
-          className="w-full"
-          disabled={pendingUi || !property.payer_email}
-          onClick={onRemind}
-        >
-          <Mail className="h-4 w-4" />
-          Send reminder
-        </Button>
-      </CardContent>
-    </Card>
   );
 }

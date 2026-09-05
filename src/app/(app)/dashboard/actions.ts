@@ -72,7 +72,13 @@ export async function createCollectorProperty(formData: FormData) {
 
     if (!error) {
       revalidatePath("/dashboard");
-      return;
+      revalidatePath("/properties");
+      return { inviteCode: invite_code };
+    }
+    if (error.code === "42P01" || error.message.includes("does not exist")) {
+      throw new Error(
+        "Database tables missing. Run phase6_dual_persona.sql in Supabase SQL Editor."
+      );
     }
     if (error.code !== "23505") {
       throw new Error(error.message);
@@ -94,18 +100,52 @@ export async function connectPayerByInviteCode(formData: FormData) {
   });
 
   if (error) {
-    if (error.message.includes("claim_property_invite")) {
-      throw new Error(
-        "Invite linking is not set up. Run phase6b_claim_invite.sql in Supabase."
-      );
+    // Fallback if RPC not installed yet: try direct claim (needs open RLS / fails gracefully)
+    if (
+      error.message.includes("claim_property_invite") ||
+      error.message.includes("Could not find the function") ||
+      error.code === "PGRST202"
+    ) {
+      const { data: property, error: findError } = await supabase
+        .from("collector_properties")
+        .select("id, payer_id")
+        .eq("invite_code", inviteCode)
+        .maybeSingle();
+
+      if (findError || !property) {
+        throw new Error(
+          "Invite code not found, or run phase6b_claim_invite.sql in Supabase so linking works."
+        );
+      }
+      if (property.payer_id) {
+        throw new Error("This invite code has already been used.");
+      }
+
+      const { error: updateError } = await supabase
+        .from("collector_properties")
+        .update({
+          payer_id: profile.id,
+          payer_name: profile.full_name,
+          payer_email: profile.email,
+        })
+        .eq("id", property.id)
+        .is("payer_id", null);
+
+      if (updateError) {
+        throw new Error(
+          "Could not connect. Ask admin to run phase6b_claim_invite.sql in Supabase."
+        );
+      }
+    } else {
+      throw new Error(error.message);
     }
-    throw new Error(error.message);
   }
 
   revalidatePath("/dashboard");
   revalidatePath("/rent");
   revalidatePath("/emi");
   revalidatePath("/expenses");
+  revalidatePath("/properties");
 }
 
 export async function submitRentPayment(formData: FormData) {
